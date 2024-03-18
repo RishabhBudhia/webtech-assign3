@@ -19,6 +19,19 @@ import NavigationBar from "../Navbar/index.tsx";
 import SearchDetails from "../SearchDetails/index.js";
 import Tabs from "../Tabs/index.js";
 
+function debounce(func, delay) {
+  console.log(delay);
+  let timeoutId;
+  return function () {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
+}
+
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,7 +48,7 @@ const Home = () => {
     }
   }, [location.state]);
 
-  const handleInputChange = async (input) => {
+  const handleInputChange = (input) => {
     if (input === "") {
       setInputValue("");
       setOptions([]);
@@ -94,6 +107,7 @@ const Home = () => {
                 value={inputValue || ""}
                 loading={loading}
                 onInputChange={(event, newInputValue) => {
+                  console.log(newInputValue);
                   handleInputChange(newInputValue);
                 }}
                 onChange={(event, newValue) => {
@@ -133,6 +147,7 @@ const Home = () => {
                 renderInput={(params) => (
                   <Form
                     onSubmit={(e, val) => {
+                      setEmpty(false);
                       e.preventDefault();
                       setOptions([]);
                       if (inputValue == "") {
@@ -194,7 +209,7 @@ const Home = () => {
             </Col>
             <Col></Col>
           </Row>
-          {empty && (
+          {empty && location.pathname == "/search/home" && (
             <div
               className="text-center p-3 mt-4"
               style={{ backgroundColor: "pink" }}

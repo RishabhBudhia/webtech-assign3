@@ -18,6 +18,7 @@ import {
   roundToTwoDecimalPlaces,
   formatDate,
   isMarketClosed,
+  isStockMarketBuySellOpen,
 } from "../../utilities/utilities.js";
 
 const SearchDetails = ({ ticker, setLoading, setStatus }) => {
@@ -52,6 +53,8 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
       avgPerShare: total / shares,
       currentPrice: data2.c,
     };
+    const updatedBalance = parseFloat(balance) - parseFloat(total);
+
     axios
       .get("https://rishabh-assign3.azurewebsites.net/api/db2/insert", {
         params: { data: obj },
@@ -59,7 +62,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
       .then((response) => {
         if (response.data.acknowledged == true) {
           setBuy(true);
-          updateBalance(balance - total);
+          updateBalance(updatedBalance);
           setTotal(0);
         }
       })
@@ -84,7 +87,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
         (parseFloat(objectWithName.data.quantity) + parseFloat(shares)),
       currentPrice: data2.c,
     };
-
+    const updatedBalance = parseFloat(balance) - parseFloat(total);
     axios
       .get("https://rishabh-assign3.azurewebsites.net/api/db2/update", {
         params: { data: obj },
@@ -92,7 +95,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
       .then((response) => {
         if (response.data.acknowledged == true) {
           setBuy(true);
-          updateBalance(balance - total);
+          updateBalance(updatedBalance);
           setTotal(0);
         }
       })
@@ -106,6 +109,25 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
     const objectWithName = portfolio.find(
       (item) => item.data.ticker === ticker
     );
+
+    if (parseFloat(objectWithName.data.quantity) - parseFloat(shares) == 0) {
+      const updatedBalance = parseFloat(balance) + parseFloat(total);
+      axios
+        .get("https://rishabh-assign3.azurewebsites.net/api/db2/delete", {
+          params: { ticker: ticker },
+        })
+        .then((response) => {
+          console.log(response);
+          setSellNotification(true);
+          updateBalance(updatedBalance);
+          setTotal(0);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setSellModal(false);
+      return;
+    }
 
     const obj = {
       ticker: ticker,
@@ -145,7 +167,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
         params: { balance: newBalance },
       })
       .then((response) => {
-        setBalance(newBalance);
+        setBalance(parseFloat(newBalance));
       })
       .catch((error) => {
         console.log(error);
@@ -156,21 +178,17 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
     axios
       .get("https://rishabh-assign3.azurewebsites.net/api/db2/read")
       .then((res) => {
-        const filteredData = res.data.filter(
-          (obj) => obj.data.quantity !== "0"
-        );
+        setPortfolio(res.data);
 
-        const filteredData2 = filteredData.filter(
+        const filteredData2 = res.data.filter(
           (obj) => obj.data.ticker == ticker
         );
-
         setCheck(parseFloat(filteredData2[0].data.quantity));
-        setPortfolio(filteredData);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [balance]);
+  }, [balance, sellModal]);
 
   useEffect(() => {
     axios
@@ -191,7 +209,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
     axios
       .get("https://rishabh-assign3.azurewebsites.net/api/db/balance")
       .then((response) => {
-        setBalance(response.data[0].balance);
+        setBalance(parseFloat(response.data[0].balance));
       })
       .catch((error) => {
         console.log(error);
@@ -241,7 +259,6 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
       setData2(location.state.stockDetails2);
       return;
     }
-    // setLoading(true);
 
     axios
       .get("https://rishabh-assign3.azurewebsites.net/api/home/quote", {
@@ -293,6 +310,16 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
       .then((res) => {
         setFavorite(true);
         setShow(true);
+      });
+  };
+
+  const removeFavorites = () => {
+    axios
+      .get("https://rishabh-assign3.azurewebsites.net/api/db/delete", {
+        params: { ticker: ticker },
+      })
+      .then((res) => {
+        setFavorite(false);
         console.log(res);
       });
   };
@@ -386,9 +413,6 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
           {total > balance && (
             <p className="text-danger fw-bold">Not enough money in wallet!</p>
           )}
-          {/* <p className="text-danger fw-bold">
-            You cannot sell the stocks that you don't have!
-          </p> */}
         </Modal.Body>
 
         <Modal.Footer className="pb-0">
@@ -396,7 +420,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
             <p>Total: {roundToTwoDecimalPlaces(total)}</p>
             <Button
               variant="success"
-              disabled={shares == 0 || total > balance}
+              disabled={shares == 0 || shares < 0 || total > balance}
               onClick={
                 portfolio.some((item) => item.data.ticker === ticker)
                   ? handleCloseExist
@@ -448,7 +472,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
             <p>Total: {roundToTwoDecimalPlaces(total)}</p>
             <Button
               variant="success"
-              disabled={shares == 0 || parseFloat(shares) > check}
+              disabled={shares == 0 || shares < 0 || parseFloat(shares) > check}
               onClick={handleCloseExistSell}
             >
               Sell
@@ -466,6 +490,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
                 {favorite ? (
                   <i
                     className="bi bi-star-fill fs-4 mb-3"
+                    onClick={removeFavorites}
                     style={{ color: "#fedd05" }}
                   ></i>
                 ) : (
@@ -484,7 +509,12 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
               </p>
               <p className="fs-sm-5 fs-6">{data.exchange}</p>
               <Stack direction="horizontal" gap={2} className="mx-auto">
-                <Button variant="success" className="px-3" onClick={handleShow}>
+                <Button
+                  variant="success"
+                  className="px-3"
+                  onClick={handleShow}
+                  disabled={!isStockMarketBuySellOpen()}
+                >
                   Buy
                 </Button>
                 {portfolio.some((item) => item.data.ticker === ticker) && (
@@ -492,6 +522,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
                     variant="danger"
                     className="px-3"
                     onClick={handleShowSell}
+                    disabled={!isStockMarketBuySellOpen()}
                   >
                     Sell
                   </Button>

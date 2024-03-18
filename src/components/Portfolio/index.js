@@ -15,7 +15,10 @@ import {
   Toast,
 } from "react-bootstrap";
 import axios from "axios";
-import { roundToTwoDecimalPlaces } from "../../utilities/utilities.js";
+import {
+  isStockMarketBuySellOpen,
+  roundToTwoDecimalPlaces,
+} from "../../utilities/utilities.js";
 const Portfolio = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -112,6 +115,7 @@ const Portfolio = () => {
       currentPrice: cp,
     };
     setTicker(ticker);
+    const updatedBalance = parseFloat(balance) - parseFloat(total);
 
     axios
       .get("https://rishabh-assign3.azurewebsites.net/api/db2/update", {
@@ -120,7 +124,7 @@ const Portfolio = () => {
       .then((response) => {
         if (response.data.acknowledged == true) {
           setBuy(true);
-          updateBalance(balance - total);
+          updateBalance(updatedBalance);
           setTotal(0);
         }
       })
@@ -131,6 +135,29 @@ const Portfolio = () => {
   };
 
   const handleCloseSell = (ticker, name, cp, oshares, ototalCost) => {
+    console.log(parseFloat(oshares));
+    console.log(shares);
+
+    if (parseFloat(shares) == parseFloat(oshares)) {
+      setTicker(ticker);
+      axios
+        .get("https://rishabh-assign3.azurewebsites.net/api/db2/delete", {
+          params: { ticker: ticker },
+        })
+        .then((response) => {
+          const updatedBalance = parseFloat(balance) + parseFloat(total);
+
+          setSellNotification(true);
+          updateBalance(updatedBalance);
+          setTotal(0);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setSellModal(false);
+      return;
+    }
+
     const obj = {
       ticker: ticker,
       name: name,
@@ -184,7 +211,7 @@ const Portfolio = () => {
         params: { balance: newBalance },
       })
       .then((response) => {
-        setBalance(newBalance);
+        setBalance(parseFloat(newBalance));
       })
       .catch((error) => {
         console.log(error);
@@ -280,9 +307,21 @@ const Portfolio = () => {
                       const change = roundToTwoDecimalPlaces(
                         itemData[stock.data.ticker] &&
                           roundToTwoDecimalPlaces(
-                            parseFloat(itemData[stock.data.ticker].c)
-                          ) - parseFloat(stock.data.currentPrice)
+                            itemData[stock.data.ticker].c
+                          ) -
+                            roundToTwoDecimalPlaces(
+                              parseFloat(stock.data.avgPerShare)
+                            )
                       );
+                      // const change = roundToTwoDecimalPlaces(
+                      //   itemData[stock.data.ticker] &&
+                      //     roundToTwoDecimalPlaces(
+                      //       parseFloat(itemData[stock.data.ticker].c)
+                      //     ) -
+                      //       roundToTwoDecimalPlaces(
+                      //         parseFloat(stock.data.currentPrice)
+                      //       )
+                      // );
 
                       return (
                         <>
@@ -340,7 +379,9 @@ const Portfolio = () => {
                                 </p>
                                 <Button
                                   variant="success"
-                                  disabled={shares == 0 || total > balance}
+                                  disabled={
+                                    shares == 0 || shares < 0 || total > balance
+                                  }
                                   onClick={() =>
                                     handleClose(
                                       tick.ticker,
@@ -421,6 +462,7 @@ const Portfolio = () => {
                                   variant="success"
                                   disabled={
                                     shares == 0 ||
+                                    shares < 0 ||
                                     parseFloat(shares) >
                                       parseFloat(tick.quantity)
                                   }
@@ -581,11 +623,13 @@ const Portfolio = () => {
                                 variant="primary"
                                 className="me-2"
                                 onClick={() => handleShow(stock.data.ticker)}
+                                disabled={!isStockMarketBuySellOpen()}
                               >
                                 Buy
                               </Button>
                               <Button
                                 variant="danger"
+                                disabled={!isStockMarketBuySellOpen()}
                                 onClick={() =>
                                   handleShowSell(stock.data.ticker)
                                 }

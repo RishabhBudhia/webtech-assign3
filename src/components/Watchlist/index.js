@@ -73,7 +73,7 @@ const Watchlist = () => {
         console.log(error);
       });
   };
-  console.log(data);
+
   return (
     <div>
       <NavigationBar currentTab={2} tick={location.state} />
