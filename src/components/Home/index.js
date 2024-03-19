@@ -179,12 +179,12 @@ const Home = () => {
                           className="bi bi-x-lg me-4"
                           onClick={() => {
                             // setOptions([]);
-                            // setInputValue("");
+                            setInputValue("");
                             // setClear(true);
-                            // setEmpty(false);
-                            // setSetStatus(false);
+                            setEmpty(false);
+                            setSetStatus(false);
                             // location.state = { symbol: null };
-                            navigate("/");
+                            navigate("/search/home");
                           }}
                           style={{ cursor: "pointer" }}
                         ></i>
