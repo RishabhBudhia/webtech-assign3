@@ -44,7 +44,6 @@ const Charts = ({ ticker, secondChart }) => {
     },
     rangeSelector: {
       enabled: true,
-      selected: 2,
       allButtonsEnabled: true,
       inputEnabled: true,
       buttons: [

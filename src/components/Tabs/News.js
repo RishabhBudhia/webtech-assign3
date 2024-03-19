@@ -42,7 +42,7 @@ const News = ({ news }) => {
         <Col key={index} xs={12} sm={6}>
           <Card
             className="mb-4"
-            style={{ backgroundColor: "#f9f9f9" }}
+            style={{ backgroundColor: "#f9f9f9", cursor: "pointer" }}
             onClick={() => handleCardClick(index)}
           >
             <Card.Body
@@ -54,7 +54,7 @@ const News = ({ news }) => {
                 gap={4}
                 className="flex-column flex-md-row"
               >
-                <Col sm={3}>
+                <Col sm={3} lg={2}>
                   <Card.Img src={item.image} className="img-fluid" />
                 </Col>
                 <Col sm={8}>
@@ -81,7 +81,7 @@ const News = ({ news }) => {
 
               <i
                 className="bi bi-x fs-5 text-primary text-decoration-underline"
-                style={{ borderBottom: "2px solid #0d6efd" }}
+                style={{ borderBottom: "2px solid #0d6efd", cursor: "pointer" }}
                 onClick={handleCloseModal}
               ></i>
             </Modal.Header>
@@ -101,7 +101,10 @@ const News = ({ news }) => {
               <p className="mx-3">Share</p>
               <Stack direction="horizontal" className="mx-3" gap={2}>
                 <a href={generateTwitterShareLink()} target="_blank">
-                  <i className="bi bi-twitter-x fs-2"></i>
+                  <i
+                    className="bi bi-twitter-x fs-2"
+                    style={{ color: "black" }}
+                  ></i>
                 </a>
                 <a href={generateFacebookShareLink()} target="_blank">
                   <i

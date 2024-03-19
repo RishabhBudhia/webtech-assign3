@@ -107,6 +107,7 @@ const Summary = ({ ticker, data, data2, firstChart }) => {
                                   state: { symbol: peer },
                                 });
                               }}
+                              style={{ cursor: "pointer" }}
                             >
                               {peer},
                             </div>

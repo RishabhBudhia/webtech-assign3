@@ -15,7 +15,10 @@ const Footer = () => {
     >
       <Container>
         <div className="h6 fw-bold mx-auto mt-2">
-          Powered by <a href="https://finnhub.io">Finnhub.io</a>
+          Powered by{" "}
+          <a href="https://finnhub.io" target="__blank">
+            Finnhub.io
+          </a>
         </div>
       </Container>
     </Navbar>

@@ -30,7 +30,7 @@ const NavigationBar = ({
         style={{ backgroundColor: "#2728b5" }}
       >
         <Container>
-          <Navbar.Brand href="#home" className="ms-4 ms-md-0 fw-light">
+          <Navbar.Brand className="ms-4 ms-md-0 fw-light">
             Stock Search
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />

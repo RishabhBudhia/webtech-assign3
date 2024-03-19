@@ -244,7 +244,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
         console.log(err);
       })
       .finally(() => {
-        setLoading(false);
+        // setLoading(false);
       });
   }, [location.state.stockDetails, ticker]);
 
@@ -269,11 +269,10 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
         location.state = { ...location.state, stockDetails2: res.data };
       })
       .catch((err) => {
-        setLoading(false);
         console.log(err);
       })
       .finally(() => {
-        setLoading(false);
+        // setLoading(false);
       });
 
     if (
@@ -426,6 +425,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
                   ? handleCloseExist
                   : handleClose
               }
+              style={{ cursor: "pointer" }}
             >
               Buy
             </Button>
@@ -474,6 +474,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
               variant="success"
               disabled={shares == 0 || shares < 0 || parseFloat(shares) > check}
               onClick={handleCloseExistSell}
+              style={{ cursor: "pointer" }}
             >
               Sell
             </Button>

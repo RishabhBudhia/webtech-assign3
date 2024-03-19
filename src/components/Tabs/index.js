@@ -157,7 +157,6 @@ export default function BasicTabs({ ticker, setLoading }) {
       })
       .then((res) => {
         location.state = { ...location.state, peers: res.data };
-        // setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -201,7 +200,6 @@ export default function BasicTabs({ ticker, setLoading }) {
         // If no data is returned, set firstChart to an empty array
         if (res.data.resultsCount === 0) {
           location.state = { ...location.state, firstChart: [[]] };
-          //   setLoading(false);
           return;
         }
         const chartData = res.data.results.map((result) => [
@@ -211,7 +209,6 @@ export default function BasicTabs({ ticker, setLoading }) {
 
         setFirstChart(chartData);
         location.state = { ...location.state, firstChart: chartData };
-        // setLoading(false);
       })
       .catch((err) => {
         console.log(err);
