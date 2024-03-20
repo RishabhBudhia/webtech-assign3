@@ -282,22 +282,27 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
           location.state.stockDetails2.t
       )
     ) {
-      let interval = setInterval(() => {
-        axios
-          .get("https://rishabh-assign3.azurewebsites.net/api/home/quote", {
-            params: { ticker },
-          })
-          .then((res) => {
-            setData2(res.data);
-            location.state = { ...location.state, stockDetails2: res.data };
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }, 15000);
-      return () => {
-        clearInterval(interval);
-      };
+      if (
+        location.pathname != "/watchlist" &&
+        location.pathname != "/portfolio"
+      ) {
+        let interval = setInterval(() => {
+          axios
+            .get("https://rishabh-assign3.azurewebsites.net/api/home/quote", {
+              params: { ticker },
+            })
+            .then((res) => {
+              setData2(res.data);
+              location.state = { ...location.state, stockDetails2: res.data };
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }, 15000);
+        return () => {
+          clearInterval(interval);
+        };
+      }
     }
   }, []);
 
