@@ -115,7 +115,7 @@ const Watchlist = () => {
                         <Card
                           className="mt-4 mb-4"
                           key={index}
-                          style={{ cursor: "pointer !important" }}
+                          style={{ cursor: "pointer" }}
                         >
                           <Card.Body>
                             <Card.Text>

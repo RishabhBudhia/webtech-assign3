@@ -37,6 +37,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
   const [sellModal, setSellModal] = useState(false);
   const [sellNotification, setSellNotification] = useState(false);
   const [check, setCheck] = useState(0);
+  const [show2, setShow2] = useState(false);
 
   const handleClose2 = () => {
     setModal(false);
@@ -324,7 +325,7 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
       })
       .then((res) => {
         setFavorite(false);
-        console.log(res);
+        setShow2(true);
       });
   };
 
@@ -344,6 +345,25 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
             >
               <Toast.Header className="p-3">
                 <p className="m-auto">{ticker} added to watchlist</p>
+              </Toast.Header>
+            </Toast>
+          </Col>
+        </Row>
+      )}
+      {show2 && (
+        <Row>
+          <Col xs={12}>
+            <Toast
+              bg="danger"
+              onClose={() => setShow2(false)}
+              show={show2}
+              delay={3000}
+              autohide
+              className="w-100 mb-2"
+              style={{ boxShadow: "none" }}
+            >
+              <Toast.Header className="p-3">
+                <p className="m-auto">{ticker} removed from watchlist</p>
               </Toast.Header>
             </Toast>
           </Col>
