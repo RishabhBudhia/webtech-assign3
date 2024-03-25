@@ -9,6 +9,9 @@ import { roundToTwoDecimalPlaces } from "../../utilities/utilities";
 const Summary = ({ ticker, data, data2, firstChart }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const newData = firstChart.map((item) =>
+    item.map((value) => parseFloat(value.toFixed(2)))
+  );
 
   return (
     <>
@@ -135,14 +138,6 @@ const Summary = ({ ticker, data, data2, firstChart }) => {
               },
               xAxis: {
                 type: "datetime",
-                labels: {
-                  formatter: function () {
-                    return Highcharts.dateFormat("%H:%M", this.value);
-                  },
-                  style: {
-                    textOverflow: "clip",
-                  },
-                },
                 title: {
                   text: null,
                 },
@@ -161,7 +156,7 @@ const Summary = ({ ticker, data, data2, firstChart }) => {
               series: [
                 {
                   name: `${ticker}`,
-                  data: location.state.firstChart || firstChart,
+                  data: newData,
                   type: "area",
                   threshold: null,
                   color: data2.d > 0 ? "green" : "red",

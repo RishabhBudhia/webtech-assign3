@@ -232,10 +232,13 @@ const Portfolio = () => {
                 show={buy}
                 delay={3000}
                 autohide
-                className="w-100 mb-2"
+                className="w-100 mb-2 border border-success-subtle"
                 style={{ boxShadow: "none" }}
               >
-                <Toast.Header className="p-3">
+                <Toast.Header
+                  className="rounded p-3"
+                  style={{ border: "none" }}
+                >
                   <p className="m-auto"> {ticker} bought succesfully</p>
                 </Toast.Header>
               </Toast>
@@ -251,10 +254,13 @@ const Portfolio = () => {
                 show={sellNotification}
                 delay={3000}
                 autohide
-                className="w-100 mb-2"
+                className="w-100 mb-2 border border-danger-subtle"
                 style={{ boxShadow: "none" }}
               >
-                <Toast.Header className="p-3">
+                <Toast.Header
+                  className="rounded p-3"
+                  style={{ border: "none" }}
+                >
                   <p className="m-auto"> {ticker} sold succesfully</p>
                 </Toast.Header>
               </Toast>

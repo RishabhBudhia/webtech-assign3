@@ -51,8 +51,11 @@ const Insights = ({ compName, sentiment, recommendation, epsSuprise }) => {
 
   const categories2 = epsSuprise.map((item) => item.period);
   const actualData = epsSuprise.map((item) => item.actual);
-  const estimateData = epsSuprise.map((item) => item.estimate);
+  const estimateData2 = epsSuprise.map((item) => item.estimate);
   const surpriseData = epsSuprise.map((item) => item.surprise);
+  const estimateData = estimateData2.map((value) =>
+    parseFloat(value.toFixed(2))
+  );
 
   return (
     <Container>

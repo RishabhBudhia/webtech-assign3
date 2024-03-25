@@ -26,6 +26,7 @@ import {
   getPrevDate,
   getOneWeekBeforeCurrentDate,
   getTwoYearsBeforeDate,
+  isStockMarketBuySellOpen,
 } from "../../utilities/utilities";
 
 function CustomTabPanel(props) {
@@ -76,50 +77,115 @@ export default function BasicTabs({ ticker, setLoading }) {
   const [sentiment, setSentiment] = useState([]);
   const [recommendation, setRecommendation] = useState([]);
   const [epsSuprise, setEpsSuprise] = useState([]);
+  const [news, setNews] = useState([]);
 
   useEffect(() => {
-    if (location.state && location.state.stockDetails) {
-      setData(location.state.stockDetails);
-      return;
-    }
+    const fetchData = async () => {
+      if (
+        location.state &&
+        location.state.stockDetails &&
+        location.state.stockDetails2 &&
+        location.state.news &&
+        location.state.sentiment &&
+        location.state.recommendation &&
+        location.state.epsSuprise
+      ) {
+        setData(location.state.stockDetails);
+        setData2(location.state.stockDetails2);
+        setNews(location.state.news);
+        setSentiment(location.state.sentiment);
+        setRecommendation(location.state.recommendation);
+        setEpsSuprise(location.state.epsSuprise);
+        if (
+          isMarketClosed(
+            location.state &&
+              location.state.stockDetails2 &&
+              location.state.stockDetails2.t
+          )
+        ) {
+          setData2(location.state.stockDetails2);
+          return;
+        }
 
-    axios
-      .get("https://rishabh-assign3.azurewebsites.net/api/home/profile2", {
-        params: { ticker },
-      })
-      .then((res) => {
-        setData(res.data);
-        location.state = { ...location.state, stockDetails: res.data };
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        return;
+      }
+      setLoading(true);
+      const from = getOneWeekBeforeCurrentDate();
+      const to = getCurrentDate();
+      const [
+        profileResponse,
+        quoteResponse,
+        peerResponse,
+        newsResponse,
+        sentimentResponse,
+        recommendationResponse,
+        epsResponse,
+      ] = await Promise.all([
+        axios.get(
+          "https://rishabh-assign3.azurewebsites.net/api/home/profile2",
+          {
+            params: { ticker },
+          }
+        ),
+        axios.get("https://rishabh-assign3.azurewebsites.net/api/home/quote", {
+          params: { ticker },
+        }),
+        axios.get("https://rishabh-assign3.azurewebsites.net/api/home/peers", {
+          params: { ticker },
+        }),
+        axios.get("https://rishabh-assign3.azurewebsites.net/api/home/news", {
+          params: { ticker, from, to },
+        }),
+        axios.get(
+          "https://rishabh-assign3.azurewebsites.net/api/home/insiderSentiment",
+          {
+            params: { ticker },
+          }
+        ),
+        axios.get(
+          "https://rishabh-assign3.azurewebsites.net/api/home/recommendation",
+          {
+            params: { ticker },
+          }
+        ),
+        axios.get(
+          "https://rishabh-assign3.azurewebsites.net/api/home/earnings",
+          {
+            params: { ticker },
+          }
+        ),
+      ]);
+
+      setData(profileResponse.data);
+      setData2(quoteResponse.data);
+
+      const filteredNews = newsResponse.data.filter(
+        (news) => news.image && news.headline
+      );
+      const top20News = filteredNews.slice(0, 20);
+      setNews(top20News);
+      setSentiment(sentimentResponse.data.data);
+
+      setRecommendation(recommendationResponse.data);
+
+      setEpsSuprise(epsResponse.data);
+
+      location.state = {
+        ...location.state,
+        stockDetails2: quoteResponse.data,
+        stockDetails: profileResponse.data,
+        peers: peerResponse.data,
+        news: top20News,
+        sentiment: sentimentResponse.data.data,
+        recommendation: recommendationResponse.data,
+        epsSuprise: epsResponse.data,
+      };
+      setLoading(false);
+    };
+    fetchData();
   }, [location.state.stockDetails, ticker]);
 
   useEffect(() => {
-    if (
-      isMarketClosed(
-        location.state &&
-          location.state.stockDetails2 &&
-          location.state.stockDetails2.t
-      )
-    ) {
-      setData2(location.state.stockDetails2);
-      return;
-    }
-
-    axios
-      .get("https://rishabh-assign3.azurewebsites.net/api/home/quote", {
-        params: { ticker },
-      })
-      .then((res) => {
-        setData2(res.data);
-        location.state = { ...location.state, stockDetails2: res.data };
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
     if (
       !isMarketClosed(
         location.state &&
@@ -127,41 +193,29 @@ export default function BasicTabs({ ticker, setLoading }) {
           location.state.stockDetails2.t
       )
     ) {
-      let interval = setInterval(() => {
-        axios
-          .get("https://rishabh-assign3.azurewebsites.net/api/home/quote", {
-            params: { ticker },
-          })
-          .then((res) => {
-            setData2(res.data);
-            location.state = { ...location.state, stockDetails2: res.data };
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }, 15000);
-      return () => {
-        clearInterval(interval);
-      };
+      if (
+        location.pathname != "/watchlist" &&
+        location.pathname != "/portfolio"
+      ) {
+        let interval = setInterval(() => {
+          axios
+            .get("https://rishabh-assign3.azurewebsites.net/api/home/quote", {
+              params: { ticker },
+            })
+            .then((res) => {
+              setData2(res.data);
+              location.state = { ...location.state, stockDetails2: res.data };
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }, 15000);
+        return () => {
+          clearInterval(interval);
+        };
+      }
     }
   }, []);
-
-  useEffect(() => {
-    if (location.state && location.state.peers) {
-      return;
-    }
-
-    axios
-      .get("https://rishabh-assign3.azurewebsites.net/api/home/peers", {
-        params: { ticker },
-      })
-      .then((res) => {
-        location.state = { ...location.state, peers: res.data };
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [location.state, ticker]);
 
   useEffect(() => {
     if (location.state && location.state.firstChart) {
@@ -169,7 +223,7 @@ export default function BasicTabs({ ticker, setLoading }) {
       return;
     }
 
-    const to = isMarketClosed(
+    const to = !isStockMarketBuySellOpen(
       location.state &&
         location.state.stockDetails2 &&
         location.state.stockDetails2.t
@@ -180,7 +234,8 @@ export default function BasicTabs({ ticker, setLoading }) {
             location.state.stockDetails2.t
         )
       : getCurrentDate();
-    const from = isMarketClosed(
+
+    const from = !isStockMarketBuySellOpen(
       location.state &&
         location.state.stockDetails2 &&
         location.state.stockDetails2.t
@@ -214,38 +269,38 @@ export default function BasicTabs({ ticker, setLoading }) {
         console.log(err);
       })
       .finally(() => {
-        setLoading(false);
+        // setLoading(false);
       });
   }, [location.state, ticker]);
   // ---------------------------------------------------------------------------------------------------------------------------
-  const [news, setNews] = useState([]);
+  // const [news, setNews] = useState([]);
 
-  useEffect(() => {
-    if (location.state && location.state.news) {
-      setNews(location.state.news);
-      return;
-    }
-    const from = getOneWeekBeforeCurrentDate();
-    const to = getCurrentDate();
-    axios
-      .get("https://rishabh-assign3.azurewebsites.net/api/home/news", {
-        params: { ticker, from, to },
-      })
-      .then((res) => {
-        const filteredNews = res.data.filter(
-          (news) => news.image && news.headline
-        );
-        const top20News = filteredNews.slice(0, 20);
-        setNews(top20News);
-        location.state = { ...location.state, news: top20News };
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [location.state, ticker]);
+  // useEffect(() => {
+  //   if (location.state && location.state.news) {
+  //     setNews(location.state.news);
+  //     return;
+  //   }
+  //   const from = getOneWeekBeforeCurrentDate();
+  //   const to = getCurrentDate();
+  //   axios
+  //     .get("https://rishabh-assign3.azurewebsites.net/api/home/news", {
+  //       params: { ticker, from, to },
+  //     })
+  //     .then((res) => {
+  //       const filteredNews = res.data.filter(
+  //         (news) => news.image && news.headline
+  //       );
+  //       const top20News = filteredNews.slice(0, 20);
+  //       setNews(top20News);
+  //       location.state = { ...location.state, news: top20News };
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     })
+  //     .finally(() => {
+  //       // setLoading(false);
+  //     });
+  // }, [location.state, ticker]);
   // ---------------------------------------------------------------------------------------------------------------------------
   const [secondChart, setSecondChart] = useState([]);
   useEffect(() => {
@@ -280,71 +335,10 @@ export default function BasicTabs({ ticker, setLoading }) {
         console.log(err);
       })
       .finally(() => {
-        setLoading(false);
+        // setLoading(false);
       });
   }, [location.state, ticker]);
   // ---------------------------------------------------------------------------------------------------------------------------
-
-  useEffect(() => {
-    if (location.state && location.state.sentiment) {
-      setSentiment(location.state.sentiment);
-      return;
-    }
-
-    axios
-      .get(
-        "https://rishabh-assign3.azurewebsites.net/api/home/insiderSentiment",
-        { params: { ticker } }
-      )
-      .then((res) => {
-        setSentiment(res.data.data);
-        location.state = { ...location.state, sentiment: res.data.data };
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [location.state, ticker]);
-  // ---------------------------------------------------------------------------------------------------------------------------
-
-  useEffect(() => {
-    if (location.state && location.state.recommendation) {
-      setRecommendation(location.state.recommendation);
-      return;
-    }
-
-    axios
-      .get(
-        "https://rishabh-assign3.azurewebsites.net/api/home/recommendation",
-        { params: { ticker } }
-      )
-      .then((res) => {
-        setRecommendation(res.data);
-        location.state = { ...location.state, recommendation: res.data };
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [location.state, ticker]);
-  // ---------------------------------------------------------------------------------------------------------------------------
-
-  useEffect(() => {
-    if (location.state && location.state.epsSuprise) {
-      setEpsSuprise(location.state.epsSuprise);
-      return;
-    }
-
-    axios
-      .get("https://rishabh-assign3.azurewebsites.net/api/home/earnings", {
-        params: { ticker },
-      })
-      .then((res) => {
-        setEpsSuprise(res.data);
-        location.state = { ...location.state, epsSuprise: res.data };
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [location.state, ticker]);
 
   return (
     <>

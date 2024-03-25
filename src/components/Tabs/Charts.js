@@ -5,13 +5,15 @@ import HighchartsReact from "highcharts-react-official";
 import indicators from "highcharts/indicators/indicators";
 import ema from "highcharts/indicators/ema";
 import vbpa from "highcharts/indicators/volume-by-price";
+import { roundToTwoDecimalPlaces } from "../../utilities/utilities";
 
 // Chart with technical indicators
-indicators(Highcharts);
-ema(Highcharts);
-vbpa(Highcharts);
 
 const Charts = ({ ticker, secondChart }) => {
+  indicators(Highcharts);
+  ema(Highcharts);
+  vbpa(Highcharts);
+
   const ohlc = [],
     volume = [],
     dataLength = secondChart.length,
@@ -34,6 +36,10 @@ const Charts = ({ ticker, secondChart }) => {
       secondChart[i][5], // the volume
     ]);
   }
+  const newData = ohlc.map((item) => [
+    item[0], // Preserve timestamp as is
+    ...item.slice(1).map((value) => parseFloat(value.toFixed(2))), // Convert other values to 2 decimal places
+  ]);
 
   const options = {
     chart: {
@@ -43,9 +49,6 @@ const Charts = ({ ticker, secondChart }) => {
       enabled: false,
     },
     rangeSelector: {
-      enabled: true,
-      allButtonsEnabled: true,
-      inputEnabled: true,
       buttons: [
         {
           type: "month",
@@ -76,6 +79,9 @@ const Charts = ({ ticker, secondChart }) => {
           text: "All",
         },
       ],
+      enabled: true,
+      allButtonsEnabled: true,
+      inputEnabled: true,
     },
 
     title: {
@@ -146,7 +152,7 @@ const Charts = ({ ticker, secondChart }) => {
         name: ticker,
         id: "stock",
         zIndex: 2,
-        data: ohlc,
+        data: newData,
       },
       {
         type: "column",

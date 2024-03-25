@@ -218,64 +218,74 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
   }, [buy]);
 
   useEffect(() => {
-    if (
-      location.state &&
-      location.state.stockDetails &&
-      location.state.stockDetails2
-    ) {
-      setData(location.state.stockDetails);
-      setData2(location.state.stockDetails2);
-      return;
-    }
-
-    setLoading(true);
-    axios
-      .get("https://rishabh-assign3.azurewebsites.net/api/home/profile2", {
-        params: { ticker },
-      })
-      .then((res) => {
-        if (Object.keys(res.data).length === 0) {
-          setStatus(true);
+    const fetchData = async () => {
+      if (
+        location.state &&
+        location.state.stockDetails &&
+        location.state.stockDetails2
+      ) {
+        setData(location.state.stockDetails);
+        if (
+          isMarketClosed(
+            location.state &&
+              location.state.stockDetails2 &&
+              location.state.stockDetails2.t
+          )
+        ) {
+          setData2(location.state.stockDetails2);
           return;
         }
-        setData(res.data);
-        location.state = { ...location.state, stockDetails: res.data };
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        // setLoading(false);
-      });
+        setData2(location.state.stockDetails2);
+        return;
+      }
+      setLoading(true);
+
+      const [profileResponse, quoteResponse] = await Promise.all([
+        axios.get(
+          "https://rishabh-assign3.azurewebsites.net/api/home/profile2",
+          {
+            params: { ticker },
+          }
+        ),
+        axios.get("https://rishabh-assign3.azurewebsites.net/api/home/quote", {
+          params: { ticker },
+        }),
+      ]);
+
+      if (Object.keys(profileResponse.data).length === 0) {
+        setStatus(true);
+        return;
+      }
+      setData(profileResponse.data);
+      location.state = {
+        ...location.state,
+        stockDetails: profileResponse.data,
+      };
+      setData2(quoteResponse.data);
+      location.state = { ...location.state, stockDetails2: quoteResponse.data };
+    };
+    fetchData();
+    // axios
+    //   .get("https://rishabh-assign3.azurewebsites.net/api/home/profile2", {
+    //     params: { ticker },
+    //   })
+    //   .then((res) => {
+    //     if (Object.keys(res.data).length === 0) {
+    //       setStatus(true);
+    //       return;
+    //     }
+    //     setData(res.data);
+    //     location.state = { ...location.state, stockDetails: res.data };
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   })
+    //   .finally(() => {
+    //     // setLoading(false);
+    //   });
   }, [location.state.stockDetails, ticker]);
 
   useEffect(() => {
-    if (
-      isMarketClosed(
-        location.state &&
-          location.state.stockDetails2 &&
-          location.state.stockDetails2.t
-      )
-    ) {
-      setData2(location.state.stockDetails2);
-      return;
-    }
-
-    axios
-      .get("https://rishabh-assign3.azurewebsites.net/api/home/quote", {
-        params: { ticker },
-      })
-      .then((res) => {
-        setData2(res.data);
-        location.state = { ...location.state, stockDetails2: res.data };
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        // setLoading(false);
-      });
-
     if (
       !isMarketClosed(
         location.state &&
@@ -340,10 +350,10 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
               show={show}
               delay={3000}
               autohide
-              className="w-100 mb-2"
+              className="w-100 mb-2 border border-success-subtle"
               style={{ boxShadow: "none" }}
             >
-              <Toast.Header className="p-3">
+              <Toast.Header className="rounded p-3" style={{ border: "none" }}>
                 <p className="m-auto">{ticker} added to watchlist</p>
               </Toast.Header>
             </Toast>
@@ -359,10 +369,10 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
               show={show2}
               delay={3000}
               autohide
-              className="w-100 mb-2"
+              className="w-100 mb-2 border border-danger-subtle"
               style={{ boxShadow: "none" }}
             >
-              <Toast.Header className="p-3">
+              <Toast.Header className="rounded p-3" style={{ border: "none" }}>
                 <p className="m-auto">{ticker} removed from watchlist</p>
               </Toast.Header>
             </Toast>
@@ -378,10 +388,10 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
               show={buy}
               delay={3000}
               autohide
-              className="w-100 mb-2"
+              className="w-100 mb-2 border border-success-subtle"
               style={{ boxShadow: "none" }}
             >
-              <Toast.Header className="p-3">
+              <Toast.Header className="rounded p-3" style={{ border: "none" }}>
                 <p className="m-auto">{ticker} bought succesfully</p>
               </Toast.Header>
             </Toast>
@@ -398,10 +408,10 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
               show={sellNotification}
               delay={3000}
               autohide
-              className="w-100 mb-2"
+              className="w-100 mb-2 border border-danger-subtle"
               style={{ boxShadow: "none" }}
             >
-              <Toast.Header className="p-3">
+              <Toast.Header className="rounded p-3" style={{ border: "none" }}>
                 <p className="m-auto">{ticker} sold succesfully</p>
               </Toast.Header>
             </Toast>

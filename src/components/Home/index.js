@@ -55,16 +55,26 @@ const Home = () => {
           (item) => item.type === "Common Stock"
         );
 
-        const uniqueDescriptions = filteredData.reduce((acc, curr) => {
-          if (!acc[curr.description]) {
-            acc[curr.description] = curr.symbol;
-          }
-          return acc;
-        }, {});
+        // const uniqueDescriptions = filteredData.reduce((acc, curr) => {
+        //   if (!acc[curr.description]) {
+        //     acc[curr.description] = curr.symbol;
+        //   }
+        //   return acc;
+        // }, {});
+        console.log(filteredData);
+        const filteredData2 = filteredData.filter(
+          (item) => !item.symbol.includes(".")
+        );
 
-        const result = Object.entries(uniqueDescriptions)
-          .filter(([description, symbol]) => !symbol.includes("."))
-          .map(([description, symbol]) => ({ description, symbol }));
+        // const result = Object.entries(filteredData)
+        //   .filter(([description, symbol]) => !symbol.includes("."))
+        //   .map(([description, symbol]) => ({ description, symbol }));
+        const result = filteredData2.map((item) => ({
+          description: item.description,
+          symbol: item.symbol,
+        }));
+
+        console.log(result);
         setOptions(result);
       })
       .catch((err) => {
@@ -178,7 +188,7 @@ const Home = () => {
                         <i
                           className="bi bi-x-lg me-4"
                           onClick={() => {
-                            // setOptions([]);
+                            setOptions([]);
                             setInputValue("");
                             // setClear(true);
                             setEmpty(false);
