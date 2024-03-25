@@ -136,7 +136,7 @@ export function isStockMarketBuySellOpen() {
   if (dayOfWeek >= 1 && dayOfWeek <= 5) {
     if (hour > 6 || (hour === 6 && minute >= 30)) {
       if (hour < 13 || (hour === 13 && minute === 0)) {
-        return true; // Market is open
+        return true;
       }
     }
   }
