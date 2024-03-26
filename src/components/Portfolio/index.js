@@ -202,7 +202,7 @@ const Portfolio = () => {
     const objectWithName = portfolioData.find(
       (item) => item.data.ticker === ticker
     );
-
+    setShares(0);
     setTick(objectWithName.data);
     setSellModal(true);
   };
@@ -489,7 +489,7 @@ const Portfolio = () => {
 
                           <Card className="mt-1 mb-4">
                             <Card.Header
-                              style={{ padding: "0 1rem" }}
+                              style={{ padding: "0 1rem", cursor: "pointer" }}
                               onClick={() =>
                                 navigate(`/search/${stock.data.ticker}`, {
                                   state: { symbol: stock.data.ticker },
