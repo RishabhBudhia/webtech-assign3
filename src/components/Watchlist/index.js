@@ -66,7 +66,6 @@ const Watchlist = () => {
         params: { ticker: tickerVal },
       })
       .then((response) => {
-        console.log(response.data);
         setUpdate(update + 1);
       })
       .catch((error) => {

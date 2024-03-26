@@ -108,14 +108,19 @@ const Portfolio = () => {
       ticker: ticker,
       name: name,
       quantity: parseFloat(oshares) + parseFloat(shares),
-      totalCost: parseFloat(ototalCost) + parseFloat(total),
-      avgPerShare:
+      totalCost: roundToTwoDecimalPlaces(
+        parseFloat(ototalCost) + parseFloat(total)
+      ),
+      avgPerShare: roundToTwoDecimalPlaces(
         (parseFloat(ototalCost) + parseFloat(total)) /
-        (parseFloat(oshares) + parseFloat(shares)),
+          (parseFloat(oshares) + parseFloat(shares))
+      ),
       currentPrice: cp,
     };
     setTicker(ticker);
-    const updatedBalance = parseFloat(balance) - parseFloat(total);
+    const updatedBalance =
+      roundToTwoDecimalPlaces(parseFloat(balance)) -
+      roundToTwoDecimalPlaces(parseFloat(total));
 
     axios
       .get("https://rishabh-assign3.azurewebsites.net/api/db2/update", {
@@ -135,9 +140,6 @@ const Portfolio = () => {
   };
 
   const handleCloseSell = (ticker, name, cp, oshares, ototalCost) => {
-    console.log(parseFloat(oshares));
-    console.log(shares);
-
     if (parseFloat(shares) == parseFloat(oshares)) {
       setTicker(ticker);
       axios
@@ -319,15 +321,6 @@ const Portfolio = () => {
                               parseFloat(stock.data.avgPerShare)
                             )
                       );
-                      // const change = roundToTwoDecimalPlaces(
-                      //   itemData[stock.data.ticker] &&
-                      //     roundToTwoDecimalPlaces(
-                      //       parseFloat(itemData[stock.data.ticker].c)
-                      //     ) -
-                      //       roundToTwoDecimalPlaces(
-                      //         parseFloat(stock.data.currentPrice)
-                      //       )
-                      // );
 
                       return (
                         <>

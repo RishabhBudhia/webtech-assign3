@@ -48,11 +48,17 @@ const Insights = ({ compName, sentiment, recommendation, epsSuprise }) => {
   const holdData = recommendation.map((item) => item.hold);
   const sellData = recommendation.map((item) => item.sell);
   const strongSellData = recommendation.map((item) => item.strongSell);
-
+  console.log(epsSuprise);
   const categories2 = epsSuprise.map((item) => item.period);
-  const actualData = epsSuprise.map((item) => item.actual);
-  const estimateData2 = epsSuprise.map((item) => item.estimate);
-  const surpriseData = epsSuprise.map((item) => item.surprise);
+  const actualData = epsSuprise.map((item) =>
+    item.actual !== null ? item.actual : 0
+  );
+  const estimateData2 = epsSuprise.map((item) =>
+    item.estimate !== null ? item.estimate : 0
+  );
+  const surpriseData = epsSuprise.map((item) =>
+    item.surprise !== null ? item.surprise : 0
+  );
   const estimateData = estimateData2.map((value) =>
     parseFloat(value.toFixed(2))
   );

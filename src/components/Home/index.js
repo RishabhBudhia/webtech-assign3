@@ -54,27 +54,15 @@ const Home = () => {
         const filteredData = res.data.result.filter(
           (item) => item.type === "Common Stock"
         );
-
-        // const uniqueDescriptions = filteredData.reduce((acc, curr) => {
-        //   if (!acc[curr.description]) {
-        //     acc[curr.description] = curr.symbol;
-        //   }
-        //   return acc;
-        // }, {});
-        console.log(filteredData);
         const filteredData2 = filteredData.filter(
           (item) => !item.symbol.includes(".")
         );
 
-        // const result = Object.entries(filteredData)
-        //   .filter(([description, symbol]) => !symbol.includes("."))
-        //   .map(([description, symbol]) => ({ description, symbol }));
         const result = filteredData2.map((item) => ({
           description: item.description,
           symbol: item.symbol,
         }));
 
-        console.log(result);
         setOptions(result);
       })
       .catch((err) => {
@@ -120,6 +108,7 @@ const Home = () => {
                     state: { symbol: valueBeforePipe },
                   });
                 }}
+                filterOptions={(options) => options}
                 options={options.map(
                   (option) => `${option.symbol} | ${option.description}`
                 )}

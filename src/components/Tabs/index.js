@@ -272,35 +272,7 @@ export default function BasicTabs({ ticker, setLoading }) {
         // setLoading(false);
       });
   }, [location.state, ticker]);
-  // ---------------------------------------------------------------------------------------------------------------------------
-  // const [news, setNews] = useState([]);
 
-  // useEffect(() => {
-  //   if (location.state && location.state.news) {
-  //     setNews(location.state.news);
-  //     return;
-  //   }
-  //   const from = getOneWeekBeforeCurrentDate();
-  //   const to = getCurrentDate();
-  //   axios
-  //     .get("https://rishabh-assign3.azurewebsites.net/api/home/news", {
-  //       params: { ticker, from, to },
-  //     })
-  //     .then((res) => {
-  //       const filteredNews = res.data.filter(
-  //         (news) => news.image && news.headline
-  //       );
-  //       const top20News = filteredNews.slice(0, 20);
-  //       setNews(top20News);
-  //       location.state = { ...location.state, news: top20News };
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     })
-  //     .finally(() => {
-  //       // setLoading(false);
-  //     });
-  // }, [location.state, ticker]);
   // ---------------------------------------------------------------------------------------------------------------------------
   const [secondChart, setSecondChart] = useState([]);
   useEffect(() => {

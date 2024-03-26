@@ -118,7 +118,6 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
           params: { ticker: ticker },
         })
         .then((response) => {
-          console.log(response);
           setSellNotification(true);
           updateBalance(updatedBalance);
           setTotal(0);
@@ -265,24 +264,6 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
       location.state = { ...location.state, stockDetails2: quoteResponse.data };
     };
     fetchData();
-    // axios
-    //   .get("https://rishabh-assign3.azurewebsites.net/api/home/profile2", {
-    //     params: { ticker },
-    //   })
-    //   .then((res) => {
-    //     if (Object.keys(res.data).length === 0) {
-    //       setStatus(true);
-    //       return;
-    //     }
-    //     setData(res.data);
-    //     location.state = { ...location.state, stockDetails: res.data };
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   })
-    //   .finally(() => {
-    //     // setLoading(false);
-    //   });
   }, [location.state.stockDetails, ticker]);
 
   useEffect(() => {
