@@ -172,9 +172,10 @@ const Portfolio = () => {
       name: name,
       quantity: parseFloat(oshares) - parseFloat(shares),
       totalCost: parseFloat(ototalCost) - parseFloat(oavgPerShare * shares),
-      avgPerShare:
+      avgPerShare: roundToTwoDecimalPlaces(
         (parseFloat(ototalCost) - parseFloat(oavgPerShare * shares)) /
-        (parseFloat(oshares) - parseFloat(shares)),
+          (parseFloat(oshares) - parseFloat(shares))
+      ),
       currentPrice: cp,
     };
     setTicker(ticker);
