@@ -139,7 +139,14 @@ const Portfolio = () => {
     setModal(false);
   };
 
-  const handleCloseSell = (ticker, name, cp, oshares, ototalCost) => {
+  const handleCloseSell = (
+    ticker,
+    name,
+    cp,
+    oshares,
+    ototalCost,
+    oavgPerShare
+  ) => {
     if (parseFloat(shares) == parseFloat(oshares)) {
       setTicker(ticker);
       axios
@@ -164,9 +171,9 @@ const Portfolio = () => {
       ticker: ticker,
       name: name,
       quantity: parseFloat(oshares) - parseFloat(shares),
-      totalCost: parseFloat(ototalCost) - parseFloat(total),
+      totalCost: parseFloat(ototalCost) - parseFloat(oavgPerShare * shares),
       avgPerShare:
-        (parseFloat(ototalCost) - parseFloat(total)) /
+        (parseFloat(ototalCost) - parseFloat(oavgPerShare * shares)) /
         (parseFloat(oshares) - parseFloat(shares)),
       currentPrice: cp,
     };
@@ -477,6 +484,9 @@ const Portfolio = () => {
                                       ),
                                       roundToTwoDecimalPlaces(
                                         parseFloat(tick.totalCost)
+                                      ),
+                                      roundToTwoDecimalPlaces(
+                                        parseFloat(tick.avgPerShare)
                                       )
                                     )
                                   }
