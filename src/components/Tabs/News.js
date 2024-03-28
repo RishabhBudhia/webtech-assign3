@@ -106,9 +106,10 @@ const News = ({ news }) => {
                     style={{ color: "black" }}
                   ></i>
                 </a>
+
                 <a href={generateFacebookShareLink()} target="_blank">
                   <i
-                    className="bi bi-facebook fs-2"
+                    class="fa-brands fa-square-facebook fs-1"
                     style={{ color: "blue" }}
                   ></i>
                 </a>
