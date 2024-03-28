@@ -12,6 +12,11 @@ const Summary = ({ ticker, data, data2, firstChart }) => {
   const newData = firstChart.map((item) =>
     item.map((value) => parseFloat(value.toFixed(2)))
   );
+  const timestampsInPDT = newData.map(([timestamp, value]) => {
+    const date = new Date(timestamp);
+    date.setHours(date.getHours() - 7);
+    return [date.getTime(), value];
+  });
 
   return (
     <>
@@ -156,7 +161,7 @@ const Summary = ({ ticker, data, data2, firstChart }) => {
               series: [
                 {
                   name: `${ticker}`,
-                  data: newData,
+                  data: timestampsInPDT,
                   type: "area",
                   threshold: null,
                   color: data2.d > 0 ? "green" : "red",

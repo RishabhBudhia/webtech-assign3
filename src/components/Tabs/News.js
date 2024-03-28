@@ -65,7 +65,7 @@ const News = ({ news }) => {
           </Card>
         </Col>
       ))}
-      {/* Modal */}
+
       <Modal show={showModal} onHide={handleCloseModal}>
         {selectedNews && (
           <>

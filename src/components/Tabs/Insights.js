@@ -23,9 +23,7 @@ const Insights = ({ compName, sentiment, recommendation, epsSuprise }) => {
   let positiveChange = 0;
   let negativeChange = 0;
 
-  // Iterate over the data array
   sentiment.forEach((item) => {
-    // Aggregate MSPR
     totalMSPR += item.mspr;
     if (item.mspr > 0) {
       positiveMSPR += item.mspr;
@@ -33,7 +31,6 @@ const Insights = ({ compName, sentiment, recommendation, epsSuprise }) => {
       negativeMSPR += item.mspr;
     }
 
-    // Aggregate Change
     totalChange += item.change;
     if (item.change > 0) {
       positiveChange += item.change;
@@ -48,7 +45,7 @@ const Insights = ({ compName, sentiment, recommendation, epsSuprise }) => {
   const holdData = recommendation.map((item) => item.hold);
   const sellData = recommendation.map((item) => item.sell);
   const strongSellData = recommendation.map((item) => item.strongSell);
-  console.log(epsSuprise);
+
   const categories2 = epsSuprise.map((item) => item.period);
   const actualData = epsSuprise.map((item) =>
     item.actual !== null ? item.actual : 0
