@@ -51,7 +51,9 @@ const SearchDetails = ({ ticker, setLoading, setStatus }) => {
       name: data.name,
       quantity: shares,
       totalCost: total,
-      avgPerShare: total / shares,
+      avgPerShare: roundToTwoDecimalPlaces(
+        parseFloat(total) / parseFloat(shares)
+      ),
       currentPrice: data2.c,
     };
     const updatedBalance = parseFloat(balance) - parseFloat(total);
