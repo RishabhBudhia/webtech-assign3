@@ -99,6 +99,7 @@ const Home = () => {
                     setLoading(false);
                     return;
                   }
+                  setEmpty(false);
                   const parts = newValue.split("|");
                   const valueBeforePipe = parts[0].trim();
                   setLoading(false);
@@ -132,8 +133,8 @@ const Home = () => {
                 renderInput={(params) => (
                   <Form
                     onSubmit={(e, val) => {
-                      setEmpty(false);
                       e.preventDefault();
+                      setEmpty(false);
                       setOptions([]);
                       if (inputValue == "") {
                         setEmpty(true);
@@ -195,7 +196,7 @@ const Home = () => {
             </Col>
             <Col></Col>
           </Row>
-          {empty && location.pathname == "/search/home" && (
+          {empty && (
             <div
               className="text-center p-3 mt-4"
               style={{ backgroundColor: "pink" }}
