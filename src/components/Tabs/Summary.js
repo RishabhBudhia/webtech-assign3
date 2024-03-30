@@ -83,6 +83,7 @@ const Summary = ({ ticker, data, data2, firstChart }) => {
                   <a
                     href={data.weburl}
                     target="_blank"
+                    rel="noreferrer"
                     style={{ marginTop: "-1rem" }}
                     className="text-nowrap"
                   >

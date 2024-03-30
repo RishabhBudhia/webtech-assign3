@@ -100,14 +100,22 @@ const News = ({ news }) => {
             <div className=" border border-2 py-3 mx-3 mb-3">
               <p className="mx-3">Share</p>
               <Stack direction="horizontal" className="mx-3" gap={2}>
-                <a href={generateTwitterShareLink()} target="_blank">
+                <a
+                  href={generateTwitterShareLink()}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   <i
                     className="bi bi-twitter-x fs-2"
                     style={{ color: "black" }}
                   ></i>
                 </a>
 
-                <a href={generateFacebookShareLink()} target="_blank">
+                <a
+                  href={generateFacebookShareLink()}
+                  rel="noreferrer"
+                  target="_blank"
+                >
                   <i
                     class="fa-brands fa-square-facebook fs-1"
                     style={{ color: "blue" }}

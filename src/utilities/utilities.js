@@ -119,20 +119,15 @@ export function getTwoYearsBeforeDate() {
 }
 
 export function isStockMarketBuySellOpen() {
-  // Get current date and time
   const now = new Date();
 
-  // Set timezone to Los Angeles
   now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
 
-  // Get day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
   const dayOfWeek = now.getDay();
 
-  // Get current hour and minute
   const hour = now.getHours();
   const minute = now.getMinutes();
 
-  // Check if it's Monday to Friday and within market hours
   if (dayOfWeek >= 1 && dayOfWeek <= 5) {
     if (hour > 6 || (hour === 6 && minute >= 30)) {
       if (hour < 13 || (hour === 13 && minute === 0)) {
@@ -141,5 +136,5 @@ export function isStockMarketBuySellOpen() {
     }
   }
 
-  return false; // Market is closed
+  return false;
 }
