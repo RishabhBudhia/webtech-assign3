@@ -308,12 +308,16 @@ const Portfolio = () => {
         ) : (
           <Row>
             {empty ? (
-              <div
-                className="text-center p-3 mt-4"
-                style={{ backgroundColor: "#fef1c8" }}
-              >
-                Currently you don't have any stock
-              </div>
+              <>
+                <Col>
+                  <div
+                    className="text-center p-3 mt-4"
+                    style={{ backgroundColor: "#fef1c8" }}
+                  >
+                    Currently you don't have any stock
+                  </div>
+                </Col>
+              </>
             ) : (
               <>
                 <Col></Col>
