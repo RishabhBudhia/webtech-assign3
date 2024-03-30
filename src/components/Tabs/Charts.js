@@ -99,6 +99,7 @@ const Charts = ({ ticker, secondChart }) => {
       dateTimeLabelFormats: {
         day: "%e %b",
       },
+      ordinal: true,
     },
     yAxis: [
       {

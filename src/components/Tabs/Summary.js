@@ -153,7 +153,6 @@ const Summary = ({ ticker, data, data2, firstChart }) => {
 
               yAxis: {
                 opposite: true,
-
                 title: {
                   text: null,
                 },

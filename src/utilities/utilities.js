@@ -141,5 +141,5 @@ export function isStockMarketBuySellOpen() {
     }
   }
 
-  return false; // Market is closed
+  return true; // Market is closed
 }
