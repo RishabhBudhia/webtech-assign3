@@ -24,7 +24,7 @@ const Portfolio = () => {
   const navigate = useNavigate();
 
   const [portfolioData, setPortfolioData] = useState([]);
-  const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState(25000);
   const [itemData, setItemData] = useState({});
   const [loading, setLoading] = useState(false);
   const [empty, setEmpty] = useState(false);
